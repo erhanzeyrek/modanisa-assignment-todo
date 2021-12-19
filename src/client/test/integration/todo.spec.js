@@ -8,7 +8,13 @@ describe('Home', () => {
     cy.visit('/');
   });
 
-  it('Write "buy some milk" in the text box, click add button and see the item "buy some milk" in the "list-todo-item"', () => {
+  it('Should display the add todo item text box, add button and todo list', () => {
+    cy.get('[id="todo-item"]').should('be.visible');
+    cy.get('button').contains('Add todo').should('be.visible');
+    cy.get('.todos').should('be.visible');
+  });
+
+  it('Write "buy some milk" in the text box, click add button and see the item "buy some milk" in the list', () => {
     cy.get('[id="todo-item"]').type('buy some milk');
     cy.get('button').contains('Add todo', { timeout: 15000 }).click();
     cy.get('.todos').eq(0).should('contain.text', 'buy some milk');

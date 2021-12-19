@@ -16,7 +16,17 @@
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
+
+const { startDevServer } = require('@cypress/webpack-dev-server');
+const webpackConfig = require('@vue/cli-service/webpack.config.js');
+
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
+  on('dev-server:start', (options) =>
+    startDevServer({
+      options,
+      webpackConfig,
+    })
+  );
+
+  return config;
+};
