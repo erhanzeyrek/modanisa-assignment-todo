@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import TodoInputComponent from './components/todo-input-component/todo-input-component.vue';
-import ListTodosComponent from './components/todo-input-component/list-todos-component.vue';
+import TodoInputComponent from './components/todo-input/todo-input-component.vue';
+import ListTodosComponent from './components/list-todos/list-todos-component.vue';
 
 export default {
   name: 'App',
