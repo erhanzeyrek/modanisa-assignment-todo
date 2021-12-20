@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <todo-input-component></todo-input-component>
-    <button>Add</button>
-    <list-todos-component></list-todos-component>
+    <todo-input-component v-model="todo"></todo-input-component>
+    <button id="add-todo" @click="addTodo(todo)">Add</button>
+    <list-todos-component :todos="todos"></list-todos-component>
   </div>
 </template>
 
@@ -12,10 +12,22 @@ import ListTodosComponent from './components/list-todos/list-todos-component.vue
 
 export default {
   name: 'App',
-  props: ['todos'],
   components: {
     TodoInputComponent,
     ListTodosComponent,
+  },
+  computed: {
+    todos() {
+      return this.$store.getters['GET_TODOS'];
+    },
+  },
+  data: () => {
+    return { todo: null };
+  },
+  methods: {
+    addTodo(value) {
+      this.$store.commit('addTodo', { todo: value });
+    },
   },
 };
 </script>

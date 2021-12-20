@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="todos">
-      <li v-for="todo in todos" :key="todo">{{ todo }}</li>
+      <li v-for="todo in todoList" :key="todo">{{ todo }}</li>
     </ul>
   </div>
 </template>
@@ -10,8 +10,16 @@
 export default {
   name: 'list-todos-component',
   props: ['todos'],
-  data: () => {
-    return {};
+
+  computed: {
+    todoList() {
+      return this.todos;
+    },
   },
 };
 </script>
+<style>
+.todos {
+  height: 100px;
+}
+</style>
