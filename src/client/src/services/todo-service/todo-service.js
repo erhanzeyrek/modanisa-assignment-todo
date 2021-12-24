@@ -1,15 +1,39 @@
 import axios from 'axios';
+import adapter from 'axios/lib/adapters/http';
 
 export default class TodoService {
-  instance = axios.create({
-    baseURL: process.ENV.API_URL,
-    timeout: 5000,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  constructor(apiUrl) {
+    this.apiUrl = apiUrl;
+  }
 
   getAllTodos() {
-    return this.instance.get('/todos');
+    return axios.request(
+      {
+        method: 'GET',
+        url: `/todos`,
+        baseURL: `${this.apiUrl}`,
+        headers: {
+          Accept: 'application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+      adapter
+    );
+  }
+
+  addTodo(msg) {
+    return axios.request(
+      {
+        method: 'POST',
+        url: `/todos`,
+        baseURL: `${this.apiUrl}`,
+        headers: {
+          Accept: 'application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        data: msg,
+      },
+      adapter
+    );
   }
 }
