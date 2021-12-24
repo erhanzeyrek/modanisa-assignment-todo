@@ -1,16 +1,14 @@
 import TodoService from '../../src/services/todo-service/todo-service';
-import * as Pact from '@pact-foundation/pact';
 
 describe('ToDo API', () => {
-  const todoService = new TodoService('http://localhost:10000');
+  const todoService = new TodoService('http://localhost:8989');
+
+  const expected_body_get_todos = [{ id: 33, message: 'buy some milk' }];
+  const expected_body_add_todo = { id: 44 };
+  const sending_body_add_todo = { message: 'buy some milk' };
 
   describe('getAllTodos()', () => {
     beforeEach((done) => {
-      const contentTypeJsonMatcher = Pact.Matchers.term({
-        matcher: 'application\\/json; *charset=utf-8',
-        generate: 'application/json; charset=utf-8',
-      });
-
       global.provider
         .addInteraction({
           state: 'gets all todos',
@@ -19,19 +17,15 @@ describe('ToDo API', () => {
             method: 'GET',
             path: '/todos',
             headers: {
-              Accept: 'application/json',
-              'Content-Type': contentTypeJsonMatcher,
+              Accept: 'application/json; charset=utf-8',
             },
-            body: { message: 'buy some milk' },
           },
           willRespondWith: {
             status: 200,
             headers: {
-              'Content-Type': contentTypeJsonMatcher,
+              'Content-Type': 'application/json; charset=utf-8',
             },
-            body: Pact.Matchers.somethingLike([
-              { id: 33, message: 'buy some milk' },
-            ]),
+            body: expected_body_get_todos,
           },
         })
         .then(() => done());
@@ -41,9 +35,8 @@ describe('ToDo API', () => {
       todoService
         .getAllTodos()
         .then((response) => {
-          expect(response).somethingLike([
-            { id: 33, message: 'buy some milk' },
-          ]);
+          expect(response.status).toEqual(200);
+          expect(response.data).toEqual(expected_body_get_todos);
         })
         .then(() => {
           global.provider.verify().then(
@@ -58,11 +51,6 @@ describe('ToDo API', () => {
 
   describe('addTodo()', () => {
     beforeEach((done) => {
-      const contentTypeJsonMatcher = Pact.Matchers.term({
-        matcher: 'application\\/json; *charset=utf-8',
-        generate: 'application/json; charset=utf-8',
-      });
-
       global.provider
         .addInteraction({
           state: 'creates a todo',
@@ -71,17 +59,16 @@ describe('ToDo API', () => {
             method: 'POST',
             path: '/addTodo',
             headers: {
-              Accept: 'application/json',
-              'Content-Type': contentTypeJsonMatcher,
+              Accept: 'application/json; charset=utf-8',
             },
-            body: { message: 'buy some milk' },
+            body: sending_body_add_todo,
           },
           willRespondWith: {
-            status: 200,
+            status: 201,
             headers: {
-              'Content-Type': contentTypeJsonMatcher,
+              'Content-Type': 'application/json; charset=utf-8',
             },
-            body: Pact.Matchers.somethingLike({ id: 33 }),
+            body: expected_body_add_todo,
           },
         })
         .then(() => done());
@@ -89,9 +76,10 @@ describe('ToDo API', () => {
 
     it('send request according to contract', (done) => {
       todoService
-        .addTodo('buy some milk')
+        .addTodo(sending_body_add_todo)
         .then((response) => {
-          expect(response.id).somethingLike(33);
+          expect(response.status).toEqual(201);
+          expect(response.data).toEqual(expected_body_add_todo);
         })
         .then(() => {
           global.provider.verify().then(

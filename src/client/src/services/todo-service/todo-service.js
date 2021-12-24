@@ -21,17 +21,17 @@ export default class TodoService {
     );
   }
 
-  addTodo(msg) {
+  addTodo(payload) {
     return axios.request(
       {
         method: 'POST',
-        url: `/todos`,
+        url: `/addTodo`,
         baseURL: `${this.apiUrl}`,
         headers: {
           Accept: 'application/json; charset=utf-8',
           'Content-Type': 'application/json; charset=utf-8',
         },
-        data: msg,
+        data: payload,
       },
       adapter
     );
