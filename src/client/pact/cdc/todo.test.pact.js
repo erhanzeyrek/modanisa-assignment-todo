@@ -36,6 +36,9 @@ describe('ToDo API', () => {
         .getAllTodos()
         .then((response) => {
           expect(response.status).toEqual(200);
+          expect(response.headers['content-type']).toEqual(
+            'application/json; charset=utf-8'
+          );
           expect(response.data).toEqual(expected_body_get_todos);
         })
         .then(() => {
@@ -79,6 +82,9 @@ describe('ToDo API', () => {
         .addTodo(sending_body_add_todo)
         .then((response) => {
           expect(response.status).toEqual(201);
+          expect(response.headers['content-type']).toEqual(
+            'application/json; charset=utf-8'
+          );
           expect(response.data).toEqual(expected_body_add_todo);
         })
         .then(() => {
