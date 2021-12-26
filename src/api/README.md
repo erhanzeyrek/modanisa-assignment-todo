@@ -1,4 +1,4 @@
-# client
+# api
 
 ## Run tests
 
