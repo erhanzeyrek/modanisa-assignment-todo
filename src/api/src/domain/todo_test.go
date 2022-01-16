@@ -35,8 +35,8 @@ func TestTodoRepo_Get(t *testing.T) {
 			msgId: 1,
 			mock: func() {
 				//We added one row
-				rows := sqlmock.NewRows([]string{"Id", "Message"}).AddRow(1, "title")
-				mock.ExpectPrepare("SELECT (.+) FROM messages").ExpectQuery().WithArgs(1).WillReturnRows(rows)
+				rows := sqlmock.NewRows([]string{"Id", "Message"}).AddRow(1, "buy some milk")
+				mock.ExpectPrepare("SELECT (.+) FROM todos").ExpectQuery().WithArgs(1).WillReturnRows(rows)
 			},
 			want: &Todo{
 				Id:        1,
@@ -44,18 +44,16 @@ func TestTodoRepo_Get(t *testing.T) {
 			},
 		},
 		{
-			//When the role tried to access is not found
 			name:  "Not Found",
 			s:     s,
 			msgId: 1,
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"Id", "Message"}) //observe that we didnt add any role here
-				mock.ExpectPrepare("SELECT (.+) FROM messages").ExpectQuery().WithArgs(1).WillReturnRows(rows)
+				rows := sqlmock.NewRows([]string{"Id", "Message"})
+				mock.ExpectPrepare("SELECT (.+) FROM todos").ExpectQuery().WithArgs(1).WillReturnRows(rows)
 			},
 			wantErr: true,
 		},
 		{
-			//When invalid statement is provided, ie the SQL syntax is wrong(in this case, we provided a wrong database)
 			name:  "Invalid Prepare",
 			s:     s,
 			msgId: 1,
@@ -71,7 +69,7 @@ func TestTodoRepo_Get(t *testing.T) {
 			tt.mock()
 			got, err := tt.s.Get(tt.msgId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Get() error new = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Get() error new = %v, wantErr %v, message %v", err, tt.wantErr, err.Message())
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
@@ -81,14 +79,13 @@ func TestTodoRepo_Get(t *testing.T) {
 	}
 }
 
-func TestMessageRepo_Create(t *testing.T) {
+func TestTodoRepo_Create(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database", err)
 	}
 	defer db.Close()
 	s := NewTodoRepository(db)
-	tm := time.Now()
 
 	tests := []struct {
 		name    string
@@ -105,12 +102,13 @@ func TestMessageRepo_Create(t *testing.T) {
 				Message:     "buy some milk",
 			},
 			mock: func() {
-				mock.ExpectPrepare("INSERT INTO todos").ExpectExec().WithArgs("message").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectPrepare("INSERT INTO todos").ExpectExec().WillReturnResult(sqlmock.NewResult(1, 1))
 			},
 			want: &Todo{
 				Id:        1,
 				Message: "buy some milk",
 			},
+			wantErr: false,
 		},
 		{
 			name: "Empty message",
@@ -119,7 +117,7 @@ func TestMessageRepo_Create(t *testing.T) {
 				Message:      "",
 			},
 			mock: func(){
-				mock.ExpectPrepare("INSERT INTO messages").ExpectExec().WithArgs("message").WillReturnError(errors.New("empty title"))
+				mock.ExpectPrepare("INSERT INTO todos").ExpectExec().WillReturnError(errors.New("empty title"))
 			},
 			wantErr: true,
 		},		
@@ -131,7 +129,7 @@ func TestMessageRepo_Create(t *testing.T) {
 			},
 			mock: func(){
 				//Instead of using todos table, used wrong_table"
-				mock.ExpectPrepare("INSERT INTO wrong_table").ExpectExec().WithArgs("title", "body", tm).WillReturnError( errors.New("invalid sql query"))
+				mock.ExpectPrepare("INSERT INTO wrong_table").ExpectExec().WithArgs("message").WillReturnError( errors.New("invalid sql query"))
 			},
 			wantErr: true,
 		},
@@ -142,7 +140,7 @@ func TestMessageRepo_Create(t *testing.T) {
 			got, err := tt.s.Create(tt.request)
 			if (err != nil) != tt.wantErr {
 				fmt.Println("this is the error message: ", err.Message())
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Create() error = %v, wantErr %v, message %v", err, tt.wantErr, err.Message())
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {

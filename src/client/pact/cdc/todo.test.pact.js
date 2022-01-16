@@ -52,22 +52,22 @@ describe('ToDo API', () => {
     });
   });
 
-  describe('addTodo()', () => {
+  describe('getTodoById()', () => {
     beforeEach((done) => {
       global.provider
         .addInteraction({
-          state: 'creates a todo',
-          uponReceiving: 'a POST request to create a todo',
+          state: 'gets a todo by id',
+          uponReceiving: 'a GET request to get a todo',
           withRequest: {
-            method: 'POST',
-            path: '/addTodo',
+            method: 'GET',
+            path: '/todos/1',
             headers: {
               Accept: 'application/json; charset=utf-8',
             },
             body: sending_body_add_todo,
           },
           willRespondWith: {
-            status: 201,
+            status: 200,
             headers: {
               'Content-Type': 'application/json; charset=utf-8',
             },
@@ -86,6 +86,52 @@ describe('ToDo API', () => {
             'application/json; charset=utf-8'
           );
           expect(response.data).toEqual(expected_body_add_todo);
+        })
+        .then(() => {
+          global.provider.verify().then(
+            () => done(),
+            (error) => {
+              done.fail(error);
+            }
+          );
+        });
+    });
+  });
+
+  describe('addTodo()', () => {
+    beforeEach((done) => {
+      global.provider
+        .addInteraction({
+          state: 'creates a todo',
+          uponReceiving: 'a POST request to create a todo',
+          withRequest: {
+            method: 'POST',
+            path: '/addTodo',
+            headers: {
+              Accept: 'application/json; charset=utf-8',
+            },
+            body: expected_body_add_todo,
+          },
+          willRespondWith: {
+            status: 201,
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+            },
+            body: sending_body_add_todo,
+          },
+        })
+        .then(() => done());
+    });
+
+    it('send request according to contract', (done) => {
+      todoService
+        .addTodo(expected_body_add_todo)
+        .then((response) => {
+          expect(response.status).toEqual(201);
+          expect(response.headers['content-type']).toEqual(
+            'application/json; charset=utf-8'
+          );
+          expect(response.data).toEqual(sending_body_add_todo);
         })
         .then(() => {
           global.provider.verify().then(

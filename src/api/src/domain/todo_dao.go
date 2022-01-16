@@ -47,7 +47,7 @@ func NewTodoRepository(db *sql.DB) todoRepoInterface {
 	return &todoeRepo{db: db}
 }
 
-func (mr *todoeRepo) Get(messageId int64) (*Todo, error_utils.TodoErr) {
+func (mr *todoeRepo) Get(todoId int64) (*Todo, error_utils.TodoErr) {
 	stmt, err := mr.db.Prepare(queryGetMessage)
 	if err != nil {
 		return nil, error_utils.NewInternalServerError(fmt.Sprintf("Error when trying to prepare todo: %s", err.Error()))
@@ -55,7 +55,7 @@ func (mr *todoeRepo) Get(messageId int64) (*Todo, error_utils.TodoErr) {
 	defer stmt.Close()
 
 	var todo Todo
-	result := stmt.QueryRow(messageId)
+	result := stmt.QueryRow(todoId)
 	if getError := result.Scan(&todo.Id, &todo.Message); getError != nil {
 		fmt.Println("Error when trying to get todo: ", getError)
 		return nil,  error_formats.ParseError(getError)
