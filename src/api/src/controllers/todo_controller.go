@@ -19,36 +19,36 @@ func GetTodoId(msgIdParam string) (int64, error_utils.TodoErr) {
 }
 
 func GetTodo(c *gin.Context) {
-	msgId, err := GetTodoId(c.Param("message_id"))
+	msgId, err := GetTodoId(c.Param("todo_id"))
 	if err != nil {
 		c.JSON(err.Status(), err)
 		return
 	}
-	message, getErr := services.TodoService.GetTodo(msgId)
+	todo, getErr := services.TodoService.GetTodo(msgId)
 	if getErr != nil {
 		c.JSON(getErr.Status(), getErr)
 		return
 	}
-	c.JSON(http.StatusOK, message)
+	c.JSON(http.StatusOK, todo)
 }
 
 func GetAllTodos(c *gin.Context) {
-	messages, getErr := services.TodoService.GetAllTodos()
+	todos, getErr := services.TodoService.GetAllTodos()
 	if getErr != nil {
 		c.JSON(getErr.Status(), getErr)
 		return
 	}
-	c.JSON(http.StatusOK, messages)
+	c.JSON(http.StatusOK, todos)
 }
 
 func CreateTodo(c *gin.Context) {
-	var message domain.Todo
-	if err := c.ShouldBindJSON(&message); err != nil {
+	var todo domain.Todo
+	if err := c.ShouldBindJSON(&todo); err != nil {
 		theErr := error_utils.NewUnprocessibleEntityError("invalid json body")
 		c.JSON(theErr.Status(), theErr)
 		return
 	}
-	msg, err := services.TodoService.CreateTodo(&message)
+	msg, err := services.TodoService.CreateTodo(&todo)
 	if err != nil {
 		c.JSON(err.Status(), err)
 		return

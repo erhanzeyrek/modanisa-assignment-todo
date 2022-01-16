@@ -29,36 +29,35 @@ func TestCreateTodo(t *testing.T) {
 	samples := []struct {
 		inputJSON  string
 		statusCode int
-		title      string
-		body       string
+		message      string
 		errMessage string
 	}{
 		{
 			inputJSON:  `{"message":"buy some milk"}`,
 			statusCode: 201,
-			title:      "buy some milk",
+			message:      "buy some milk",
 			errMessage: "",
 		},
 		{
 			inputJSON:  `{"message":"buy some milk"}`,
 			statusCode: 500,
-			errMessage: "title already exists",
+			errMessage: "same todo already exists",
 		},
 		{
-			inputJSON:  `{"message":"""}`,
+			inputJSON:  `{"message":""}`,
 			statusCode: 422,
 			errMessage: "Please enter a valid todo message",
 		},
 		{
-			inputJSON:  `{"title": 12345}`,
+			inputJSON:  `{"message": 12345}`,
 			statusCode: 422,
 			errMessage: "invalid json body",
 		},
 	}
 	for _, v := range samples {
 		r := gin.Default()
-		r.POST("/todos", controllers.CreateTodo)
-		req, err := http.NewRequest(http.MethodPost, "/todos", bytes.NewBufferString(v.inputJSON))
+		r.POST("/addTodo", controllers.CreateTodo)
+		req, err := http.NewRequest(http.MethodPost, "/addTodo", bytes.NewBufferString(v.inputJSON))
 		if err != nil {
 			t.Errorf("this is the error: %v\n", err)
 		}
@@ -74,7 +73,7 @@ func TestCreateTodo(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 		if v.statusCode == 201 {
 			//casting the interface to map:
-			assert.Equal(t, responseMap["title"], v.title)
+			assert.Equal(t, responseMap["message"], v.message)
 		}
 		if v.statusCode == 400 || v.statusCode == 422 || v.statusCode == 500 && v.errMessage != "" {
 			assert.Equal(t, responseMap["message"], v.errMessage)
@@ -110,7 +109,7 @@ func TestGetTodoByID(t *testing.T) {
 			errMessage: "",
 		},
 		{
-			id:         "unknwon",
+			id:         "unknown",
 			statusCode: 400,
 			errMessage: "todo id should be a number",
 		},
@@ -138,7 +137,7 @@ func TestGetTodoByID(t *testing.T) {
 		assert.Equal(t, rr.Code, v.statusCode)
 
 		if v.statusCode == 200 {
-			assert.Equal(t, responseMap["title"], v.message)
+			assert.Equal(t, responseMap["message"], v.message)
 		}
 		if v.statusCode == 400 || v.statusCode == 422 && v.errMessage != "" {
 			assert.Equal(t, responseMap["message"], v.errMessage)
