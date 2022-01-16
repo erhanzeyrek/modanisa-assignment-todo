@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint",
     "start": "webpack-dev-server --config ./node_modules/@vue/cli-service/webpack.config.js --mode development",
     "test:cypress": "start-server-and-test start http://localhost:8080 cypress",
-    "test:pact": "jest  --runInBand --setupFiles ./pact/pactConfig.js --setupFilesAfterEnv ./pact/jest-wrapper.js --testMatch \"**/*.test.pact.js\"",
+    "test:pact": "jest  --runInBand --setupFiles ./pact/pactConfig.js --setupFilesAfterEnv ./pact/jest-wrapper.js --testMatch \"**/*.test.pact.js\" --testTimeout=10000",
     "cypress": "cypress run"
   },
   "dependencies": {

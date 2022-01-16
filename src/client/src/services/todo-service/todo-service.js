@@ -36,4 +36,19 @@ export default class TodoService {
       adapter
     );
   }
+
+  getTodoById(todoId) {
+    return axios.request(
+      {
+        method: 'GET',
+        url: `/todos/${todoId}`,
+        baseURL: `${this.apiUrl}`,
+        headers: {
+          Accept: 'application/json; charset=utf-8',
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+      },
+      adapter
+    );
+  }
 }

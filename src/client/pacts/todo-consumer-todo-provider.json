@@ -7,29 +7,6 @@
   },
   "interactions": [
     {
-      "description": "a GET request to get all todos",
-      "providerState": "gets all todos",
-      "request": {
-        "method": "GET",
-        "path": "/todos",
-        "headers": {
-          "Accept": "application/json; charset=utf-8"
-        }
-      },
-      "response": {
-        "status": 200,
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "body": [
-          {
-            "id": 33,
-            "message": "buy some milk"
-          }
-        ]
-      }
-    },
-    {
       "description": "a POST request to create a todo",
       "providerState": "creates a todo",
       "request": {
@@ -48,8 +25,52 @@
           "Content-Type": "application/json; charset=utf-8"
         },
         "body": {
-          "id": 44
+          "id": 1
         }
+      }
+    },
+    {
+      "description": "a GET request to get a todo",
+      "providerState": "gets a todo by id",
+      "request": {
+        "method": "GET",
+        "path": "/todos/1",
+        "headers": {
+          "Accept": "application/json; charset=utf-8"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": {
+          "id": 1,
+          "message": "buy some milk"
+        }
+      }
+    },
+    {
+      "description": "a GET request to get all todos",
+      "providerState": "gets all todos",
+      "request": {
+        "method": "GET",
+        "path": "/todos",
+        "headers": {
+          "Accept": "application/json; charset=utf-8"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "body": [
+          {
+            "id": 1,
+            "message": "buy some milk"
+          }
+        ]
       }
     }
   ],
